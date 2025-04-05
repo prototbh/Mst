@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MONSTER TRANSLATION</title>
+    <style>
+        /* ===== RESET & BASE STYLES ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f8f8;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        
+        /* ===== LAYOUT STYLES ===== */
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 30px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 3px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .logo-img {
+            height: 60px;
+            width: auto;
+        }
+        
+        .title {
+            font-size: 2.2rem;
+            color: #222;
+            font-weight: 700;
+        }
+        
+        /* ===== FORM STYLES ===== */
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        textarea {
+            width: 100%;
+            min-height: 150px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            resize: vertical;
+            font-size: 1rem;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+        
+        select, button {
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            background: #f0f0f0;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+        }
+        
+        select {
+            flex-grow: 1;
+            min-width: 200px;
+        }
+        
+        button {
+            background: #4a6fa5;
+            color: white;
+            border: none;
+        }
+        
+        button:hover {
+            background: #3a5a8a;
+        }
+        
+        /* ===== OUTPUT STYLES ===== */
+        .output-container {
+            margin-top: 25px;
+        }
+        
+        .output-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        
+        .output {
+            padding: 15px;
+            border: 1px dashed #aaa;
+            border-radius: 6px;
+            min-height: 50px;
+            word-break: break-all;
+            background: #f9f9f9;
+            font-family: 'Courier New', monospace;
+        }
+        
+        /* ===== RESPONSIVE ADJUSTMENTS ===== */
+        @media (max-width: 600px) {
+            .header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .controls {
+                flex-direction: column;
+            }
+            
+            select, button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <img src="https://raw.githubusercontent.com/prototbh/Mst/refs/heads/main/wM1JsllLUqUuQAAAABJRU5ErkJggg%3D%3D.png" 
+                 alt="Monster Translation Logo" 
+                 class="logo-img">
+            <h1 class="title">MONSTER TRANSLATION</h1>
+        </header>
+        
+        <div class="input-group">
+            <textarea id="inputText" placeholder="Enter text to translate..."></textarea>
+        </div>
+        
+        <div class="controls">
+            <select id="translationDirection">
+                <option value="toMonster">English → Monster</option>
+                <option value="toEnglish">Monster → English</option>
+            </select>
+            <button id="translateBtn">TRANSLATE</button>
+            <button id="copyBtn">COPY</button>
+        </div>
+        
+        <div class="output-container">
+            <span class="output-label">Translation Result:</span>
+            <div class="output" id="outputText"></div>
+        </div>
+    </div>
+
+    <script>
+        // ===== TRANSLATION LOGIC =====
+        const monsterCipher = {
+            // Alphabet substitutions
+            a: '᠁', b: 'ᓚ', c: 'ᓷ', d: 'ᝰ', e: 'ʬ', f: '҂', g: 'ᛞ', h: 'ᚙ', 
+            i: 'ᚾ', j: '҉', k: 'ᖬ', l: 'ᠨ', m: 'ᜰ', n: '₪', o: 'ᙨ', p: '⛧', 
+            q: '♆', r: '⁂', s: '⁙', t: '☠', u: '⚕', v: '⌖', w: '⍟', x: '⏃', 
+            y: '⏚', z: '⍜',
+            
+            // Reverse substitutions for decoding
+            '᠁': 'a', 'ᓚ': 'b', 'ᓷ': 'c', 'ᝰ': 'd', 'ʬ': 'e', '҂': 'f', 'ᛞ': 'g', 'ᚙ': 'h',
+            'ᚾ': 'i', '҉': 'j', 'ᖬ': 'k', 'ᠨ': 'l', 'ᜰ': 'm', '₪': 'n', 'ᙨ': 'o', '⛧': 'p',
+            '♆': 'q', '⁂': 'r', '⁙': 's', '☠': 't', '⚕': 'u', '⌖': 'v', '⍟': 'w', '⏃': 'x',
+            '⏚': 'y', '⍜': 'z',
+            
+            // Space and punctuation
+            ' ': ' ', '.': '⸱', ',': '⸲', '!': '‼'
+        };
+
+        /**
+         * Translates English text to Monster language
+         * @param {string} text - Input text to translate
+         * @returns {string} Translated text
+         */
+        function translateToMonster(text) {
+            return text.toLowerCase()
+                      .split('')
+                      .map(char => monsterCipher[char] || char)
+                      .join('');
+        }
+
+        /**
+         * Translates Monster language back to English
+         * @param {string} text - Encoded Monster text
+         * @returns {string} Decoded English text
+         */
+        function translateToEnglish(text) {
+            return text.split('')
+                      .map(char => monsterCipher[char] || char)
+                      .join('');
+        }
+
+        // ===== DOM ELEMENTS =====
+        const inputText = document.getElementById('inputText');
+        const outputText = document.getElementById('outputText');
+        const translateBtn = document.getElementById('translateBtn');
+        const copyBtn = document.getElementById('copyBtn');
+        const direction = document.getElementById('translationDirection');
+
+        // ===== EVENT HANDLERS =====
+        translateBtn.addEventListener('click', handleTranslation);
+        copyBtn.addEventListener('click', handleCopy);
+
+        /**
+         * Handles the translation process
+         */
+        function handleTranslation() {
+            const text = inputText.value.trim();
+            if (!text) return;
+            
+            const result = direction.value === 'toMonster' 
+                ? translateToMonster(text) 
+                : translateToEnglish(text);
+                
+            outputText.textContent = result;
+        }
+
+        /**
+         * Handles copying the translated text
+         */
+        function handleCopy() {
+            if (!outputText.textContent) return;
+            
+            navigator.clipboard.writeText(outputText.textContent)
+                .then(() => {
+                    const originalText = copyBtn.textContent;
+                    copyBtn.textContent = 'Copied!';
+                    setTimeout(() => {
+                        copyBtn.textContent = originalText;
+                    }, 2000);
+                })
+                .catch(err => {
+                    console.error('Failed to copy:', err);
+                    alert('Failed to copy text. Please try again.');
+                });
+        }
+    </script>
+</body>
+</html>
